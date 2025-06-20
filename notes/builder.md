@@ -2,19 +2,22 @@
 
 - `Builder Pattern` is used to create a object piece by piece and not all at once with a big ass constructor.
 - `Fluent` functions are functions which return the same interface back so that we can chain methods
+
 ```go
 func (i *FluentInterface) CallFunc(name string) *FluentInterface {
-	fmt.Println(name)
-	return i
+ fmt.Println(name)
+ return i
 }
 
 func main() {
-	i := FluentInterface{};
-	i.CallFunc("Hello").CallFunc("World")
+ i := FluentInterface{};
+ i.CallFunc("Hello").CallFunc("World")
 }
 ```
+
 - As you can see here, the two functions can be chained as they are passing the interface
-- In the `HTMLBuilder` example, we were trying to create a struct through which we can construct an HTML component without much code calls. In the end, we were able to create a whole list using just this - 
+- In the `HTMLBuilder` example, we were trying to create a struct through which we can construct an HTML component without much code calls. In the end, we were able to create a whole list using just this -
+
 ```go
 fb.AddChildFluent("li", "item 1").AddChildFluent("li", "item 2")
 ```
@@ -22,21 +25,25 @@ fb.AddChildFluent("li", "item 1").AddChildFluent("li", "item 2")
 ## Builder Facets
 
 - For creating a builder for a struct, we can also divide the work into multiple builder function and then aggregate them.
+
 #### Compositon notes
-- If there is a struct `Parent` and another pair of structs `Child1` and `Child2` and this is the setup - 
+
+- If there is a struct `Parent` and another pair of structs `Child1` and `Child2` and this is the setup -
+
 ```go
 type Parent struct{}
 type Child1 struct{
-	Parent
+ Parent
 }
 type Child2 struct{
-	Parent
+ Parent
 }
 
 func(p *Parent) ParentMethod() {}
 func(c *Child1) ChildMethod1() {}
 func(c *Child2) ChildMethod2() {}
 ```
+
 - Objects of `Parent` will only have access to `ParentMethod()`
 - Objects of `Child1` will have access to `ParentMethod()` and `ChildMethod1()`
 - Objects of `Child2` will have access to `ParentMethod()` and `ChildMethod2()`
@@ -62,7 +69,7 @@ type Email struct {}
 func sendEmailImpl(email *Email) {}
 
 type Builder struct {
-	email Email
+ email Email
 }
 func (b* Builder) From(email string) {}
 // similar functions to help create Email
@@ -70,21 +77,22 @@ func (b* Builder) From(email string) {}
 type build func(*Builder)
 
 func SendMail(action build) {
-	emailBuilder := Builder{}
-	action(&emailBuilder)
-	sendMailEmailImpl(&emailBuilder.email)
+ emailBuilder := Builder{}
+ action(&emailBuilder)
+ sendMailEmailImpl(&emailBuilder.email)
 }
 
 func main() {
-	SendMail(func(eb *Builder) {
-		eb.
-			From("abc@gmail.com").
-			To("def@yahoo.com").
-			Subject("First email").
-			Body("Hello, how are you?")
-	})
+ SendMail(func(eb *Builder) {
+  eb.
+   From("abc@gmail.com").
+   To("def@yahoo.com").
+   Subject("First email").
+   Body("Hello, how are you?")
+ })
 }
 ```
+
 - Inside the `build` function, we can create the object using the builder function and as you can see in the `SendEmail` function, we get the built email after doing `action` and then we can share the object, all while making sure that the internal object is not touched by the `SendEmail` function
 - Also this can be used to validate the fields of the object with the functions responsible for building
 
@@ -97,23 +105,24 @@ func main() {
 
 ```go
 type Builder struct {
-	email Email
-	err   error
+ email Email
+ err   error
 }
 
 func (b *Builder) From(from string) *Builder {
-	if b.err != nil {
-		return b
-	}  //  This makes sure that if there was any error in the previous calls, we will not do any processing in this call
-	if !strings.Contains(from, "@") {
-		b.err = fmt.Errorf("From should have an @")
-		// this sets the error and returns
-		return b
-	}
-	b.email.From = from
-	return b
+ if b.err != nil {
+  return b
+ }  //  This makes sure that if there was any error in the previous calls, we will not do any processing in this call
+ if !strings.Contains(from, "@") {
+  b.err = fmt.Errorf("From should have an @")
+  // this sets the error and returns
+  return b
+ }
+ b.email.From = from
+ return b
 }
 ```
+
 - As you can see here, if there is any error, we will not do any further processing and just return the builder with the error.
 
 ## Functional Builder
