@@ -58,5 +58,3 @@ func TestFunctionalBuilder() {
 		pa.Called("Shreyash").Is("Developer")
 	})
 }
-
-//	TODO try to use build params here
