@@ -10,6 +10,33 @@
 - Instead, we can define an interface `Renderer` which needs to have functions of how to actually draw the particular shape.
 - And then we can pass the `Renderer` inside the different types of objects so that they can utilize the render function of either of the two renderers
 
+```go
+type Renderer interface {
+ RenderCircle(radius float32)
+}
+
+type RastererRenderer struct {
+ Dpi int
+}
+
+func (r *RastererRenderer) RenderCircle(radius float32) {
+ fmt.Println("Drawing through raster pixels for a circle of radius ", radius)
+}
+
+type Circle struct {
+ renderer Renderer
+ radius   float32
+}
+
+func (c *Circle) Draw() {
+ c.renderer.RenderCircle(c.radius)
+}
+
+raster := RastererRenderer{Dpi: 10}
+circle := NewCircle(&raster, 4)
+circle.Draw()
+```
+
 ## Composite Pattern
 
 - Composition lets us make compound objects

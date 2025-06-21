@@ -132,3 +132,38 @@ func (b *Builder) From(from string) *Builder {
 - Once build is called, then only we create all the actions and create the object.
 - I personally think this approach is better.
 - This can also be used as builder params.
+
+```go
+type personAMod func(*PersonA)
+type PersonABuilder struct {
+ actions []personAMod
+}
+
+func (b *PersonABuilder) Called(name string) *PersonABuilder {
+ b.actions = append(b.actions, func(pa *PersonA) {
+  pa.name = name
+ })
+
+ return b
+}
+
+func (b *PersonABuilder) Build() *PersonA {
+ p := PersonA{}
+ for _, a := range b.actions {
+  a(&p)
+ }
+ return &p
+}
+
+func Introduce(action personBuild) {
+ pb := PersonABuilder{}
+ action(&pb)
+ // at this point, all the actions required to create a function have been added
+ introducePerson(pb.Build())
+}
+
+Introduce(func(pa *PersonABuilder) {
+ pa.Called("Shreyash").Is("Developer")
+})
+
+```
