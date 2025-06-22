@@ -1,4 +1,7 @@
 - The idea is a chain of components who all get a chance to process a command or query, optionally having default processing implementation and an ability to terminate the processing chain.
+- Can be implemented as a linked list o pointers or a centralised construct (like sync.Map in the second example)
+- Enlist objects in chain, maybe control their order
+- Control Object removal from chain.
 
 ## Command Query Separation
 
